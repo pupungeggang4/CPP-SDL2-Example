@@ -74,3 +74,5 @@ Testing/
 .DS_Store
 *.swp
 *.png~
+build/
+index*
