@@ -3,11 +3,17 @@
 #endif
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 bool isRunning;
+SDL_Window* window = nullptr;
+SDL_Renderer* renderer = nullptr;
+SDL_Texture* texture = nullptr;
+SDL_Rect rect = {0, 0, 0, 0};
+TTF_Font* font;
 
 void loop() {
     SDL_Event event;
@@ -15,13 +21,18 @@ void loop() {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-
-        #ifdef __EMSCRIPTEN__
-        if (!isRunning) {
-            emscripten_cancel_main_loop();
-        }
-        #endif
     }
+
+    SDL_SetRenderDrawColor(renderer, 20, 20, 30, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, &rect);
+    SDL_RenderPresent(renderer);
+
+    #ifdef __EMSCRIPTEN__
+    if (!isRunning) {
+        emscripten_cancel_main_loop();
+    }
+    #endif
 }
 
 int main(int argc, char** argv) {
@@ -30,13 +41,32 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    SDL_Window* window = SDL_CreateWindow(
-        "SDL2 기본 윈도우", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (TTF_Init() < 0) {
+        std::cerr << TTF_GetError() << std::endl;
+        return -1;
+    }
+
+    font = TTF_OpenFont("asset/neodgm.ttf", 32);
+
+    window = SDL_CreateWindow(
+        "SDL2 Text", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN
+    );
+
     if (window == nullptr) {
         std::cerr << SDL_GetError() << std::endl;
         SDL_Quit();
         return -1;
     }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Surface* surface = TTF_RenderText_Blended(font, "Hello World!", white);
+    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    rect.w = surface->w;
+    rect.h = surface->h;
+    SDL_FreeSurface(surface);
 
     isRunning = true;
 
@@ -45,8 +75,11 @@ int main(int argc, char** argv) {
     #else
     while (isRunning) {
         loop();
-        SDL_Delay(16);
     }
+    SDL_DestroyTexture(texture);
+    TTF_CloseFont(font);
+    TTF_Quit();
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     #endif
