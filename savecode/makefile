@@ -4,7 +4,7 @@ win-msys:
 mac-brew:
 	g++ main.cpp -o build/main.out -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -lSDL2_ttf
 
-empp:
+emcc:
 	em++ main.cpp -o build/index.html -Os -lidbfs.js -s USE_SDL=2 -s FORCE_FILESYSTEM=1
 
 dummy:
