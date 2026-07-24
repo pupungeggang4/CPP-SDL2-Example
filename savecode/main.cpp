@@ -10,7 +10,7 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 bool isRunning = false;
-bool isSaving = false; // 💡 저장 중 입력 차단 플래그
+bool isSaving = false;
 std::ifstream ifs;
 std::ofstream ofs;
 std::string path;
@@ -105,12 +105,11 @@ void init() {
 }
 
 void run() {
-    // Init SDL2
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << SDL_GetError() << std::endl;
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return;
     }
-
+    
     window = SDL_CreateWindow(
         "SDL2 기본 윈도우", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr) {
