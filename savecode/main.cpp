@@ -13,6 +13,49 @@ bool isRunning;
 std::ifstream ifs;
 std::ofstream ofs;
 int num = 0;
+bool asyncLock = false;
+
+#ifdef __EMSCRIPTEN__
+void emFileInit() {
+    EM_ASM({
+        try {
+            FS.mkdir('/save');
+        } catch (e) {
+        }
+
+        FS.mount(FS.filesystems.IDBFS, {}, '/save');
+        FS.syncfs(true, function (err) {
+            if (err) {
+                console.error("Failed to load save data from IndexedDB:", err);
+            } else {
+                console.log("Save data loaded successfully from IndexedDB.");
+            }
+        });
+    });
+}
+
+void emFileRead() {
+    ifs.open("/save/save.txt");
+    ifs >> num;
+    ifs.close();
+}
+
+void emFileWrite() {
+    ofs.open("/save/save.txt");
+    ofs << num;
+    ofs.close();
+   
+    EM_ASM(
+        FS.syncfs(false, function (err) {
+            if (err) {
+                console.error("Failed to persist save to IndexedDB:", err);
+            } else {
+                console.log("Save successfully persisted to IndexedDB!");
+            }
+        });
+    );
+}
+#endif
 
 void loop() {
     SDL_Event event;
@@ -22,6 +65,10 @@ void loop() {
         }
         if (event.type == SDL_MOUSEBUTTONUP) {
             num += 1;
+            std::cout << num << std::endl;
+            #ifdef __EMSCRIPTEN__
+            emFileWrite();
+            #endif
         }
 
         #ifdef __EMSCRIPTEN__
@@ -34,7 +81,8 @@ void loop() {
 
 int main(int argc, char** argv) {
     #ifdef __EMSCRIPTEN__
-    
+    emFileInit();
+    emFileRead();
     #else
     // Init file system
     std::string path = "";
@@ -44,7 +92,7 @@ int main(int argc, char** argv) {
         std::ofstream createFile(path);
         createFile << 0;
         createFile.close();
-        ifs.open("number.txt", std::ios::in | std::ios::out);
+        ifs.open(path);
     }
     ifs >> num;
     ifs.close();
