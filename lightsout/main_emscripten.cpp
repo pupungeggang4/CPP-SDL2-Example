@@ -10,6 +10,6 @@ int main(int argc, char** argv) {
         [](void* arg) {
             static_cast<Game*>(arg)->loop(); 
         }, 
-    game.get(), 0, 0);
+    game.get(), 0, 1);
     return 0;
 }

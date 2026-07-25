@@ -35,25 +35,20 @@ void Game::run() {
     // Init game
     scene = make_shared<Scene>();
     board = make_shared<Board>();
-    numCell = 0; numMove = 0;
+    numCell = 123; numMove = 123;
 }
 
 void Game::loop() {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
-    scene->render(*this);
-    for (int i = 0; i < 7; i++) {
-        for (int j = 0; j < 7; j++) {
-            SDL_Rect dstRect = {120 + i * 80, 40 + j * 80, 80, 80};
-            //if (game.board->cell[i][j]) SDL_RenderCopy(game.renderer, Asset::on, NULL, &dstRect);
-            //else SDL_RenderCopy(game.renderer, Asset::off, NULL, &dstRect);
-            if (Asset::on != nullptr) {
-            SDL_RenderCopy(renderer, Asset::on, NULL, &dstRect);
-            }
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            running = false;
         }
     }
-    SDL_RenderPresent(renderer);
-
     scene->update(*this);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
+    scene->render(*this);
+    SDL_RenderPresent(renderer);
 }
 
 void Game::loadAsset() {
