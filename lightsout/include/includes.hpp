@@ -8,10 +8,13 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <cstring>
 #include <string>
 #include <memory>
+#include <random>
 
 using std::shared_ptr;
 using std::unique_ptr;

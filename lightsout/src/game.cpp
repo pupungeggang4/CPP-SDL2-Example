@@ -35,20 +35,42 @@ void Game::run() {
     // Init game
     scene = make_shared<Scene>();
     board = make_shared<Board>();
-    numCell = 123; numMove = 123;
+    board->reset();
 }
 
 void Game::loop() {
+    handleInput();
+    scene->update(*this);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
+    scene->render(*this);
+    SDL_RenderPresent(renderer);
+
+    #ifdef __EMSCRIPTEN__
+    if (!running) {
+        emscripten_cancel_main_loop();
+    }
+    #endif
+}
+
+void Game::handleInput() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             running = false;
         }
+
+        if (event.type == SDL_MOUSEBUTTONUP) {
+            scene->handleMouse(*this, event.button.x, event.button.y, event.button.button);
+        }
+
+        if (event.type == SDL_KEYUP) {
+            #ifndef __EMSCRIPTEN
+            if (key == SDLK_L) {
+                loadFile(*this);
+            }
+            #endif
+        }
     }
-    scene->update(*this);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
-    scene->render(*this);
-    SDL_RenderPresent(renderer);
 }
 
 void Game::loadAsset() {

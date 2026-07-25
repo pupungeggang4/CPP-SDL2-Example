@@ -8,5 +8,5 @@ class Scene {
         void start(Game&);
         void render(Game&);
         void update(Game&);
-        //void handleMouse(Game&);
+        void handleMouse(Game&, int, int, int);
 };

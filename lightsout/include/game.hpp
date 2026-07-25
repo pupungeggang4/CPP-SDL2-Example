@@ -15,11 +15,11 @@ class Game {
 
         shared_ptr<Scene> scene;
         shared_ptr<Board> board;
-        int numCell, numMove;
 
         Game();
         void run();
         void loop();
+        void handleInput();
         void loadAsset();
         void disposeAsset();
         void cleanup();
