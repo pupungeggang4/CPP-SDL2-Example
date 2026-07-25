@@ -9,4 +9,12 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
+#include <string>
 #include <memory>
+
+using std::shared_ptr;
+using std::unique_ptr;
+using std::weak_ptr;
+using std::make_shared;
+using std::make_unique;
