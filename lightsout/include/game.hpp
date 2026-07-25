@@ -11,7 +11,7 @@ class Game {
         SDL_Renderer* renderer;
         SDL_Rect rectCellText, rectCellTextNum, rectMoveText, rectMoveTextNum;
 
-        bool running = true;
+        bool running = true, locked = false;
 
         shared_ptr<Scene> scene;
         shared_ptr<Board> board;

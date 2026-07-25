@@ -8,6 +8,6 @@ mac-brew:
 	g++ main_desktop.cpp src/*.cpp -o build/main.out -Iinclude -I/opt/homebrew/include -L/opt/homebrew/lib -lSDL2 -lSDL2_ttf -lSDL2_image && cp -r asset build/asset
 
 emcc:
-	em++ main_emscripten.cpp src/*.cpp -o build/index.html -Iinclude \
+	em++ main_emscripten.cpp src/*.cpp -o build/index.html -Iinclude -lidbfs.js \
 	-sUSE_SDL=2 -sUSE_SDL_TTF=2 -sUSE_SDL_IMAGE=2 -sSDL2_IMAGE_FORMATS='["png"]' -sMAX_WEBGL_VERSION=2 \
-	--preload-file "asset@asset"
+	-sEXPORTED_FUNCTIONS='["_main"]' --preload-file "asset@asset"

@@ -39,6 +39,7 @@ void Game::run() {
 }
 
 void Game::loop() {
+	if (locked) return;
     handleInput();
     scene->update(*this);
     SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
@@ -65,14 +66,22 @@ void Game::handleInput() {
 
         if (event.type == SDL_KEYUP) {
             int key = event.key.keysym.sym;
-            #ifndef __EMSCRIPTEN
             if (key == SDLK_l) {
+				#ifndef __EMSCRIPTEN__
                 loadFile(*this);
+				#else
+				emLoadFile(*this);
+				#endif
             }
             if (key == SDLK_s) {
+				#ifndef __EMSCRIPTEN__
                 saveFile(*this);
+				#else
+				locked = true;
+				emSaveFile(*this);
+				emSyncFile(this);
+				#endif
             }
-            #endif
         }
     }
 }

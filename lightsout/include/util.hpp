@@ -3,9 +3,12 @@
 
 class Game;
 #ifdef __EMSCRIPTEN__
-void emInitSave();
-void emLoadFile();
-void emSaveFile();
+void emGameInit(Game*);
+void emSyncFile(Game*);
+void emSaveFile(Game&);
+void emLoadFile(Game&);
+extern "C" void emGameRun(Game*);
+extern "C" void emSynced(Game*);
 #endif
 void loadFile(Game&);
 void saveFile(Game&);

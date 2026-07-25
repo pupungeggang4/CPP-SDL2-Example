@@ -42,10 +42,11 @@ void Scene::update(Game& game) {
 
 void Scene::handleMouse(Game& game, int x, int y, int button) {
     if (button == 1) {
-        int crow = (y - 40) / 80;
-        int ccol = (x - 120) / 80;
-        std::cout << crow << ',' << ccol << std::endl;
-        game.board->flip(crow, ccol);
-        game.board->move += 1;
+		if (x > 120 && x < 680 && y > 40 && y < 600) {
+			int crow = (y - 40) / 80;
+			int ccol = (x - 120) / 80;
+			game.board->flip(crow, ccol);
+			game.board->move += 1;
+		}
     }
 }
