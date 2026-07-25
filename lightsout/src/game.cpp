@@ -1,6 +1,8 @@
 #include "includes.hpp"
 #include "asset.hpp"
 #include "util.hpp"
+#include "board.hpp"
+#include "scene.hpp"
 #include "game.hpp"
 
 Game::Game() {
@@ -8,6 +10,7 @@ Game::Game() {
 }
 
 void Game::run() {
+    // Init SDL2.
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Failed to initialize SDL." << std::endl;
         return;
@@ -29,31 +32,28 @@ void Game::run() {
 
     loadAsset();
 
-    self = shared_from_this();
+    // Init game
+    scene = make_shared<Scene>();
+    board = make_shared<Board>();
+    numCell = 0; numMove = 0;
 }
 
 void Game::loop() {
     SDL_SetRenderDrawColor(renderer, 255, 255, 127, 255);
-    SDL_RenderClear(renderer);
+    scene->render(*this);
     for (int i = 0; i < 7; i++) {
         for (int j = 0; j < 7; j++) {
             SDL_Rect dstRect = {120 + i * 80, 40 + j * 80, 80, 80};
-            if ((i + j) % 2)
+            //if (game.board->cell[i][j]) SDL_RenderCopy(game.renderer, Asset::on, NULL, &dstRect);
+            //else SDL_RenderCopy(game.renderer, Asset::off, NULL, &dstRect);
+            if (Asset::on != nullptr) {
             SDL_RenderCopy(renderer, Asset::on, NULL, &dstRect);
-            else
-            SDL_RenderCopy(renderer, Asset::off, NULL, &dstRect);
+            }
         }
     }
-    SDL_RenderCopy(renderer, Asset::cellText, NULL, &rectCellText);
-    SDL_RenderCopy(renderer, Asset::moveText, NULL, &rectMoveText);
-
-    std::string num = "123";
-    for (int i = 0; i < num.length(); i++) {
-        int l = (int)num[i] - '0';
-        SDL_Rect dstRect = {220 + i * 16, 4, 16, 32};
-        SDL_RenderCopy(renderer, Asset::numText[l], NULL, &dstRect);
-    }
     SDL_RenderPresent(renderer);
+
+    scene->update(*this);
 }
 
 void Game::loadAsset() {
