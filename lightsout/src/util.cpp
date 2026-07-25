@@ -14,7 +14,7 @@ void loadFile(Game& game) {
         ifs.open("save.txt");
     }
 
-    shared_ptr<Board> board = game->board;
+    shared_ptr<Board> board = game.board;
 
     ifs >> board->move;
     for (int i = 0; i < 7; i++) {
@@ -22,8 +22,20 @@ void loadFile(Game& game) {
             ifs >> board->cell[i][j];
         }
     }
+    board->count();
     ifs.close();
 }
 
 void saveFile(Game& game) {
+    std::ofstream ofs("save.txt");
+    shared_ptr<Board> board = game.board;
+
+    ofs << board->move << std::endl;
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 7; j++) {
+            ofs << board->cell[i][j];
+            ofs << std::endl;
+        }
+    }
+    ofs.close();
 }

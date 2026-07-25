@@ -1,7 +1,7 @@
 #pragma once
 #include "includes.hpp"
 
-class Game();
+class Game;
 #ifdef __EMSCRIPTEN__
 void emInitSave();
 void emLoadFile();

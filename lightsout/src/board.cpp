@@ -19,12 +19,7 @@ void Board::reset() {
         int r = (index - c) / col;
         flip(r, c);
     }
-    left = 0;
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < col; j++) {
-            if (cell[i][j] == 1) left += 1;
-        }
-    }
+    count();
 }
 
 bool Board::isInside(int r, int c) {
@@ -40,6 +35,10 @@ void Board::flip(int r, int c) {
             cell[crow][ccol] = 1 - cell[crow][ccol];
         }
     }
+    count();
+}
+
+void Board::count() {
     left = 0;
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {

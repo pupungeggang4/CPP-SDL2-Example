@@ -14,4 +14,5 @@ class Board {
         void reset();
         bool isInside(int, int);
         void flip(int, int);
+        void count();
 };
