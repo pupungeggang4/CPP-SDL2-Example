@@ -18,7 +18,7 @@ void emGameInit(Game* game) {
 				_emGameRun(appPtr);
 			}
 		});
-	}, game);	
+	}, game);
 }
 
 void emSyncFile(Game* game) {
@@ -35,45 +35,6 @@ void emSyncFile(Game* game) {
 			}
         });
     }, game);
-}
-
-void emLoadFile(Game& game) {
-    std::ifstream ifs("/save/save.txt");
-    if (!ifs.is_open()) {
-		std::cout << "No file" << std::endl;
-        std::ofstream create("/save/save.txt");
-        create << "0" << std::endl;
-        for (int i = 0; i < 7; i++) {
-            create << "0 0 0 0 0 0 0" << std::endl;
-        }
-        create.close();
-        ifs.open("/save/save.txt");
-    }
-
-    shared_ptr<Board> board = game.board;
-
-    ifs >> board->move;
-    for (int i = 0; i < 7; i++) {
-        for (int j = 0; j < 7; j++) {
-            ifs >> board->cell[i][j];
-        }
-    }
-    board->count();
-    ifs.close();
-}
-
-void emSaveFile(Game& game) {
-    std::ofstream ofs("/save/save.txt");
-    shared_ptr<Board> board = game.board;
-
-    ofs << board->move << std::endl;
-    for (int i = 0; i < 7; i++) {
-        for (int j = 0; j < 7; j++) {
-            ofs << board->cell[i][j];
-            ofs << std::endl;
-        }
-    }
-    ofs.close();
 }
 
 extern "C" {
@@ -95,16 +56,34 @@ void emSynced(Game* game) {
 }
 #endif
 
+void saveSequence(Game* game) {
+    #ifdef __EMSCRIPTEN__
+    game->locked = true;
+    saveFile(*game);
+    emSyncFile(game);
+    #else
+    saveFile(*game);
+    #endif
+}
+
 void loadFile(Game& game) {
-    std::ifstream ifs("save.txt");
+    std::string path;
+
+    #ifdef __EMSCRIPTEN__
+    path = "/save/save.txt";
+    #else
+    path = "save.txt";
+    #endif
+
+    std::ifstream ifs(path);
     if (!ifs.is_open()) {
-        std::ofstream create("save.txt");
+        std::ofstream create(path);
         create << "0" << std::endl;
         for (int i = 0; i < 7; i++) {
             create << "0 0 0 0 0 0 0" << std::endl;
         }
         create.close();
-        ifs.open("save.txt");
+        ifs.open(path);
     }
 
     shared_ptr<Board> board = game.board;
@@ -120,7 +99,15 @@ void loadFile(Game& game) {
 }
 
 void saveFile(Game& game) {
-    std::ofstream ofs("save.txt");
+    std::string path;
+
+    #ifdef __EMSCRIPTEN__
+    path = "/save/save.txt";
+    #else
+    path = "save.txt";
+    #endif
+
+    std::ofstream ofs(path);
     shared_ptr<Board> board = game.board;
 
     ofs << board->move << std::endl;

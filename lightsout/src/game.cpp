@@ -67,20 +67,10 @@ void Game::handleInput() {
         if (event.type == SDL_KEYUP) {
             int key = event.key.keysym.sym;
             if (key == SDLK_l) {
-				#ifndef __EMSCRIPTEN__
                 loadFile(*this);
-				#else
-				emLoadFile(*this);
-				#endif
             }
             if (key == SDLK_s) {
-				#ifndef __EMSCRIPTEN__
-                saveFile(*this);
-				#else
-				locked = true;
-				emSaveFile(*this);
-				emSyncFile(this);
-				#endif
+			    saveSequence(this);
             }
         }
     }
