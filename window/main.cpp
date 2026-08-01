@@ -15,13 +15,17 @@ void loop() {
         if (event.type == SDL_QUIT) {
             isRunning = false;
         }
-
-        #ifdef __EMSCRIPTEN__
-        if (!isRunning) {
-            emscripten_cancel_main_loop();
+        else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            int mouseX = event.button.x;
+            int mouseY = event.button.y;
+            printf("(%d, %d)\n", mouseX, mouseY);
         }
-        #endif
     }
+    #ifdef __EMSCRIPTEN__
+    if (!isRunning) {
+		emscripten_cancel_main_loop();
+	}
+	#endif
 }
 
 int main(int argc, char** argv) {
